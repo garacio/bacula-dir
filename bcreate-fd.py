@@ -254,18 +254,18 @@ def main():
     print "Adding host: %s" % fd_hostname
 
     print """
-  hostname:   %s
-  domain:     %s
-  schedule:   %s
-  fileset:    %s
-  pool:       %s
-  fqdn:       %s
-  storage:    %s
-  client.d:   %s
-  password:   %s
+      hostname:   %s
+      domain:     %s
+      schedule:   %s
+      fileset:    %s
+      pool:       %s
+      fqdn:       %s
+      storage:    %s
+      client.d:   %s
+      password:   %s
 
 
-  """ % (fd_hostname, fd_domain, fd_schedule, fd_fileset, fd_pool, fd_fqdn, fd_storage_node, fd_client_dir, fd_password)
+      """ % (fd_hostname, fd_domain, fd_schedule, fd_fileset, fd_pool, fd_fqdn, fd_storage_node, fd_client_dir, fd_password)
 
     write_client_conf(fd_hostname, fd_schedule, fd_fqdn, fd_pool, fd_fileset, fd_storage_node, fd_password, fd_client_dir)
 

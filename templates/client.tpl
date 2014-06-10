@@ -32,3 +32,14 @@ Job {
     Cancel Lower Level Duplicates = yes
     Allow Duplicate Jobs = no
 }
+
+Job {
+    Name = "{{ fqdn }}-Restore"
+    Type = Restore
+    Client= "{{ fqdn }}-fd"
+    FileSet="{{ fileset }}"
+    Storage = {{ storage_node }}
+    Pool = "{{ pool }}"
+    Messages = Standard
+    Where = /tmp
+}
