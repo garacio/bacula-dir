@@ -264,7 +264,6 @@ def main():
       schedule:   %s
       fileset:    %s
       pool:       %s
-      fqdn:       %s
       storage:    %s
       client.d:   %s
       password:   %s
