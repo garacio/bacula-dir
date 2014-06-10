@@ -8,6 +8,7 @@ import random
 import ConfigParser
 import argparse
 import glob
+import socket
 
 try:
     from jinja2 import Template, Environment, PackageLoader
@@ -111,8 +112,6 @@ def read_in_args_and_conf():
     schedule_choices = parse_schedules(bacula_dir)
     schedule_default = defaults["schedule"]
 
-    domain_default = defaults["domain"]
-
     storage_node_choices = parse_storages(bacula_dir)
     storage_node_default = defaults["storage_node"]
 
@@ -139,12 +138,6 @@ def read_in_args_and_conf():
         '-H', '--hostname',
         help = 'Short hostname of fd client',
         required = True
-    )
-
-    parser.add_argument(
-        '-d', '--domain',
-        default = domain_default,
-        help = 'Domain (ie: example.com) that the fd client is in'
     )
 
     parser.add_argument(
@@ -221,14 +214,21 @@ def generate_password(length):
     return pwstring
 
 
-def write_client_conf(hostname, schedule, fqdn, pool, fileset, storage_node, passhash, client_dir):
+def write_client_conf(hostname, schedule, pool, fileset, storage_node, passhash, client_dir):
 
     env = Environment(loader=PackageLoader('bcreate-fd', 'templates'))
     template = env.get_template('client.tpl')
 
     f = open(client_dir + "/" + hostname + ".conf", "w")
-    f.write( template.render(schedule=schedule, fqdn=fqdn, pool=pool, fileset=fileset, storage_node=storage_node, passhash=passhash) )
+    f.write( template.render(schedule=schedule, fqdn=hostname, pool=pool, fileset=fileset, storage_node=storage_node, passhash=passhash) )
     f.close()
+
+
+def get_ip_from_hostname(fqdn):
+
+    addr = socket.gethostbyname(fqdn)
+
+    return addr
 
 
 def print_fd_conf(fqdn, passhash):
@@ -236,6 +236,11 @@ def print_fd_conf(fqdn, passhash):
     env = Environment(loader=PackageLoader('bcreate-fd', 'templates'))
     template = env.get_template('fd.tpl')
 
+    my_ip = get_ip_from_hostname(fqdn)
+
+    print "UFW Rule: ufw allow from %s to any app bacula" % my_ip
+
+    print "\n### copy your bacula-fd.conf to client.. ###\n"
     print template.render(fqdn=fqdn, passhash=passhash)
 
 
@@ -243,13 +248,10 @@ def main():
 
     args = read_in_args_and_conf()
 
-    bacula_dir = args["bacula_dir"]
-    fd_hostname = args["hostname"] + "." + args["domain"]
-    fd_domain = args["domain"]
+    fd_hostname = args["hostname"]
     fd_pool = args["pool"]
     fd_schedule = args["schedule"]
     fd_fileset = args['fileset']
-    fd_fqdn = fd_hostname
     fd_storage_node = args["storage_node"]
     fd_client_dir = args["client_conf_dir"]
     fd_password_len = args["password_length"]
@@ -259,7 +261,6 @@ def main():
 
     print """
       hostname:   %s
-      domain:     %s
       schedule:   %s
       fileset:    %s
       pool:       %s
@@ -269,11 +270,11 @@ def main():
       password:   %s
 
 
-      """ % (fd_hostname, fd_domain, fd_schedule, fd_fileset, fd_pool, fd_fqdn, fd_storage_node, fd_client_dir, fd_password)
+      """ % (fd_hostname, fd_schedule, fd_fileset, fd_pool, fd_storage_node, fd_client_dir, fd_password)
 
-    write_client_conf(fd_hostname, fd_schedule, fd_fqdn, fd_pool, fd_fileset, fd_storage_node, fd_password, fd_client_dir)
+    write_client_conf(fd_hostname, fd_schedule, fd_pool, fd_fileset, fd_storage_node, fd_password, fd_client_dir)
 
-    print_fd_conf(fd_fqdn, fd_password)
+    print_fd_conf(fd_hostname, fd_password)
 
     sys.exit(0)
 

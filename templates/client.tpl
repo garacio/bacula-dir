@@ -13,7 +13,7 @@ client {
 }
 
 Job {
-    Name = "{{ fqdn }}-Job"
+    Name = "{{ fqdn }}"
     Type = Backup
     Level = Incremental
     FileSet = "{{ fileset }}"
@@ -23,7 +23,6 @@ Job {
     Schedule = "{{ schedule }}"
     Messages = Standard
     Priority = 10
-    Write Bootstrap = "/var/db/bacula/%c.bsr"
     Maximum Concurrent Jobs = 10
     Reschedule On Error = yes
     Reschedule Interval = 1 hour
