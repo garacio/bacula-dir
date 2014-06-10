@@ -22,7 +22,7 @@ DEFAULT_CONFIG = './fd.conf'
 def parse_schedules(bacula_dir):
     schedules = []
     try:
-        for filename in glob.iglob(bacula_dir + 'conf.d/schedules.d/*.conf'):
+        for filename in glob.iglob(bacula_dir + '/conf.d/schedules.d/*.conf'):
             for line in open(filename, 'r'):
                 if "Name" in line:
                     schedules.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
@@ -36,7 +36,7 @@ def parse_schedules(bacula_dir):
 def parse_pools(bacula_dir):
     pools = []
     try:
-        for filename in glob.iglob(bacula_dir + 'conf.d/pools.d/*.conf'):
+        for filename in glob.iglob(bacula_dir + '/conf.d/pools.d/*.conf'):
             for line in open(filename, 'r'):
                 if "Name" in line:
                     pools.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
@@ -63,7 +63,7 @@ def parse_storages(bacula_dir):
 def parse_filesets(bacula_dir):
     filesets = []
     try:
-        for filename in glob.iglob(bacula_dir + 'conf.d/filesets.d/*.conf'):
+        for filename in glob.iglob(bacula_dir + '/conf.d/filesets.d/*.conf'):
             for line in open(filename, 'r'):
                 if "Name" in line:
                     filesets.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
