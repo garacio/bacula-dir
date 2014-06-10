@@ -7,6 +7,7 @@ import os.path
 import random
 import ConfigParser
 import argparse
+import glob
 
 try:
     from jinja2 import Template, Environment, PackageLoader
@@ -21,11 +22,12 @@ DEFAULT_CONFIG = './fd.conf'
 def parse_schedules(bacula_dir):
     schedules = []
     try:
-        for line in open(bacula_dir + "/conf.d/schedules.conf", "r"):
-            if "Name" in line:
-                schedules.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
+        for filename in glob.iglob(bacula_dir + 'conf.d/schedules.d/*.conf'):
+            for line in open(filename, 'r'):
+                if "Name" in line:
+                    schedules.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
     except:
-        print sys.stderr, 'Error: %s/conf.d/schedules.conf does not exist. Please create one.' % bacula_dir
+        print sys.stderr, 'Error: %s/conf.d/schedules.d/*.conf does not exist. Please create one.' % bacula_dir
         sys.exit(1)
 
     return schedules
@@ -34,11 +36,12 @@ def parse_schedules(bacula_dir):
 def parse_pools(bacula_dir):
     pools = []
     try:
-        for line in open(bacula_dir + "/conf.d/pools.conf", "r"):
-            if "Name" in line:
-                pools.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
+        for filename in glob.iglob(bacula_dir + 'conf.d/pools.d/*.conf'):
+            for line in open(filename, 'r'):
+                if "Name" in line:
+                    pools.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
     except:
-        print sys.stderr, 'Error: %s/conf.d/pools.conf does not exist. Please create one.' % bacula_dir
+        print sys.stderr, 'Error: %s/conf.d/pools.d/*.conf does not exist. Please create one.' % bacula_dir
         sys.exit(1)
 
     return pools
@@ -60,11 +63,12 @@ def parse_storages(bacula_dir):
 def parse_filesets(bacula_dir):
     filesets = []
     try:
-        for line in open(bacula_dir + "/conf.d/filesets.conf", "r"):
-            if "Name" in line:
-                filesets.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
+        for filename in glob.iglob(bacula_dir + 'conf.d/filesets.d/*.conf'):
+            for line in open(filename, 'r'):
+                if "Name" in line:
+                    filesets.append(line.strip().replace('"', '').replace(' ', '').split("=")[-1])
     except:
-        print sys.stderr, 'Error: %s/conf.d/filesets.conf does not exist. Please create one.' % bacula_dir
+        print sys.stderr, 'Error: %s/conf.d/filesets.d/*.conf does not exist. Please create one.' % bacula_dir
         sys.exit(1)
 
     return filesets
